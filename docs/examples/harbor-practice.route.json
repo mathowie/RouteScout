@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "id": "HARBOR-PRACTICE",
+  "name": "Harbor practice route",
+  "area": "Fictional Harbor Village",
+  "effective": "",
+  "miles": 1.0,
+  "map": null,
+  "steps": [
+    {
+      "id": 1,
+      "action": "depart",
+      "title": "Harbor Road",
+      "source": "Leave Harbor Depot heading east on Harbor Road. Continue for 0.40 miles.",
+      "details": [],
+      "miles": 0.4,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 2,
+      "action": "right",
+      "title": "Maple Avenue",
+      "source": "Turn right onto Maple Avenue. Continue for 0.25 miles.",
+      "details": [],
+      "miles": 0.25,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 3,
+      "action": "left",
+      "title": "Pine Court mailboxes",
+      "source": "Turn left into Pine Court. Service the 12 centralized boxes at the mailbox stop. Continue for 0.05 miles to the exit.",
+      "details": ["One delivery stop with 12 centralized boxes."],
+      "miles": 0.05,
+      "stops": 1,
+      "regular": 0,
+      "centralized": 12,
+      "service": true,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 4,
+      "action": "return",
+      "title": "Harbor Depot",
+      "source": "Return to Harbor Depot along Access Lane. Travel 0.30 miles.",
+      "details": [],
+      "miles": 0.3,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 5,
+      "action": "finish",
+      "title": "End at Harbor Depot",
+      "source": "Arrive at Harbor Depot. This is the end of the route.",
+      "details": [],
+      "miles": 0,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    }
+  ]
+}

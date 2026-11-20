@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="About Route Scout, a free route companion for rural postal carriers and RCAs.">
+  <title>About · Route Scout</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="about-page">
+  <header class="topbar">
+    <div class="topbar-inner about-header">
+      <a class="brand" href="./index.html" aria-label="Open Route Scout">
+        <span class="brand-icon">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 18 5-13 5 8 7-7v12"/><circle cx="3.5" cy="18" r="1.5" fill="currentColor" stroke="none"/><circle cx="20.5" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span>Route<span class="brand-light">Scout</span></span>
+      </a>
+      <a class="about-home" href="./index.html">Open app</a>
+    </div>
+  </header>
+
+  <main class="about-main">
+    <article class="surface about-card">
+      <!-- Edit the project description below to update this About page. -->
+      <h1>About</h1>
+      <p>This is a free routing app for rural postal carriers, especially RCAs. It uses a standard JSON file format to turn your Line of Travel PDF documents from your USPS office into a navigation aid, with spoken directions for when to turn and how many postal stops to make after each step.</p>
+      <p>Nothing is hosted here except the web app and its documentation. Your imported route stays in your browser. To create your own route file, follow the <a href="https://haughey.com/rca/docs/">JSON format documentation</a>, which includes prompts you can give ChatGPT to help convert your PDF into JSON.</p>
+      <h2>How to use RouteScout</h2>
+      <p>If you're an RCA working for the USPS and you have a new route, follow these steps to tailor the app for you.</p>
+      <ol>
+        <li>Pull up ChatGPT's Codex or Claude, then upload a PDF of your route's line of travel PDF doc and ask it to create a JSON file of your route <a href="https://www.haughey.com/rca/docs/">that follows the docs page I made for the JSON input format</a> (share my docs URL and ask AI to read it, parse it, and follow it when creating your JSON), then download the resulting file.</li>
+        <li>Open RouteScout on the device you'll use while you deliver mail (your phone, not your desktop browser) and then upload/import your newly prepared JSON route file from step 1.</li>
+        <li>Go to Settings and "Enable speaking directions" after turning off mute on your iPhone to hear it in mobile Safari. Hit the "Enable GPS" button in the top right so you'll get a handy green dot on your maps to show exactly where you are throughout your day.</li>
+        <li>Drive to the start of your route and hit the advance button after you complete each step (while stopped is best, just after you deliver, before you take off from the curb is best). It'll tell you where to turn next and how many houses/boxes you'll need to stop at on each segment of your route.</li>
+      </ol>
+      <p class="about-credit">This was built with Codex/ChatGPT by <a href="https://www.haughey.com">Matthew Haughey</a>.</p>
+    </article>
+    <footer class="app-footer">
+      <span>Route Scout</span>
+      <a href="./index.html">Open app</a>
+      <a href="https://haughey.com/rca/docs/">Documentation</a>
+    </footer>
+  </main>
+</body>
+</html>

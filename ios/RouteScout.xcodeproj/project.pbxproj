@@ -1,0 +1,485 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4A913A9B0000000000000002 /* RouteScoutApp.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B0000000000000001 /* RouteScoutApp.swift */;
+		};
+		4A913A9B0000000000000004 /* RouteModel.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B0000000000000003 /* RouteModel.swift */;
+		};
+		4A913A9B0000000000000006 /* RouteGuidance.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B0000000000000005 /* RouteGuidance.swift */;
+		};
+		4A913A9B0000000000000008 /* RouteMap.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B0000000000000007 /* RouteMap.swift */;
+		};
+		4A913A9B000000000000000A /* GuideView.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B0000000000000009 /* GuideView.swift */;
+		};
+		4A913A9B000000000000000C /* RouteSheets.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B000000000000000B /* RouteSheets.swift */;
+		};
+		4A913A9B000000000000000E /* RouteScoutUITests.swift in Sources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B000000000000000D /* RouteScoutUITests.swift */;
+		};
+		4A913A9B0000000000000010 /* Assets.xcassets in Resources */ = {
+			isa = PBXBuildFile;
+			fileRef = 4A913A9B000000000000000F /* Assets.xcassets */;
+		};
+		4A913A9B0000000000000019 /* RouteScoutCore in Frameworks */ = {
+			isa = PBXBuildFile;
+			productRef = 4A913A9B0000000000000018 /* RouteScoutCore */;
+		};
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4A913A9B0000000000000022 /* App proxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A913A9B0000000000000020 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A913A9B0000000000000021;
+			remoteInfo = RouteScout;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4A913A9B0000000000000001 /* RouteScoutApp.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteScoutApp.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000003 /* RouteModel.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteModel.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000005 /* RouteGuidance.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteGuidance.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000007 /* RouteMap.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteMap.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000009 /* GuideView.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = GuideView.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B000000000000000B /* RouteSheets.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteSheets.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B000000000000000D /* RouteScoutUITests.swift */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = RouteScoutUITests.swift;
+			sourceTree = "<group>";
+		};
+		4A913A9B000000000000000F /* Assets.xcassets */ = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder.assetcatalog;
+			path = Assets.xcassets;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000011 /* RouteScout.app */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = RouteScout.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4A913A9B0000000000000012 /* RouteScoutUITests.xctest */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = RouteScoutUITests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4A913A9B000000000000001B /* RouteScout Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A913A9B0000000000000019 /* RouteScoutCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A913A9B000000000000001E /* RouteScoutUITests Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4A913A9B0000000000000016 /* Main group */ = {
+			isa = PBXGroup;
+			children = (
+				4A913A9B0000000000000013 /* RouteScoutApp */,
+				4A913A9B0000000000000014 /* RouteScoutUITests sources */,
+				4A913A9B0000000000000015 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000013 /* RouteScoutApp */ = {
+			isa = PBXGroup;
+			children = (
+				4A913A9B0000000000000001 /* RouteScoutApp.swift */,
+				4A913A9B0000000000000003 /* RouteModel.swift */,
+				4A913A9B0000000000000005 /* RouteGuidance.swift */,
+				4A913A9B0000000000000007 /* RouteMap.swift */,
+				4A913A9B0000000000000009 /* GuideView.swift */,
+				4A913A9B000000000000000B /* RouteSheets.swift */,
+				4A913A9B000000000000000F /* Assets.xcassets */,
+			);
+			path = RouteScoutApp;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000014 /* RouteScoutUITests sources */ = {
+			isa = PBXGroup;
+			children = (
+				4A913A9B000000000000000D /* RouteScoutUITests.swift */,
+			);
+			path = RouteScoutUITests;
+			sourceTree = "<group>";
+		};
+		4A913A9B0000000000000015 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4A913A9B0000000000000011 /* RouteScout.app */,
+				4A913A9B0000000000000012 /* RouteScoutUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A913A9B0000000000000021 /* RouteScout */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A913A9B0000000000000024 /* RouteScout Configuration list */;
+			buildPhases = (
+				4A913A9B000000000000001A /* RouteScout Sources */,
+				4A913A9B000000000000001B /* RouteScout Frameworks */,
+				4A913A9B000000000000001C /* RouteScout Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = RouteScout;
+			packageProductDependencies = (
+				4A913A9B0000000000000018 /* RouteScoutCore */,
+			);
+			productName = RouteScout;
+			productReference = 4A913A9B0000000000000011 /* RouteScout.app */;
+			productType = com.apple.product-type.application;
+		};
+		4A913A9B0000000000000026 /* RouteScoutUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A913A9B0000000000000025 /* RouteScoutUITests Configuration list */;
+			buildPhases = (
+				4A913A9B000000000000001D /* RouteScoutUITests Sources */,
+				4A913A9B000000000000001E /* RouteScoutUITests Frameworks */,
+				4A913A9B000000000000001F /* RouteScoutUITests Resources */,
+			);
+			buildRules = ();
+			dependencies = (
+				4A913A9B0000000000000023 /* UI tests dependency */,
+			);
+			name = RouteScoutUITests;
+			packageProductDependencies = ();
+			productName = RouteScoutUITests;
+			productReference = 4A913A9B0000000000000012 /* RouteScoutUITests.xctest */;
+			productType = com.apple.product-type.bundle.ui-testing;
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4A913A9B0000000000000020 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2720;
+				LastUpgradeCheck = 2720;
+				TargetAttributes = {
+					4A913A9B0000000000000021 = {
+						CreatedOnToolsVersion = 27.2;
+					};
+					4A913A9B0000000000000026 = {
+						CreatedOnToolsVersion = 27.2;
+						TestTargetID = 4A913A9B0000000000000021;
+					};
+				};
+			};
+			buildConfigurationList = 4A913A9B0000000000000027 /* Project Configuration list */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4A913A9B0000000000000016 /* Main group */;
+			packageReferences = (
+				4A913A9B0000000000000017 /* Local package */,
+			);
+			productRefGroup = 4A913A9B0000000000000015 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4A913A9B0000000000000021 /* RouteScout */,
+				4A913A9B0000000000000026 /* RouteScoutUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4A913A9B000000000000001C /* RouteScout Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A913A9B0000000000000010 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A913A9B000000000000001F /* RouteScoutUITests Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4A913A9B000000000000001A /* RouteScout Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A913A9B0000000000000002 /* RouteScoutApp.swift in Sources */,
+				4A913A9B0000000000000004 /* RouteModel.swift in Sources */,
+				4A913A9B0000000000000006 /* RouteGuidance.swift in Sources */,
+				4A913A9B0000000000000008 /* RouteMap.swift in Sources */,
+				4A913A9B000000000000000A /* GuideView.swift in Sources */,
+				4A913A9B000000000000000C /* RouteSheets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A913A9B000000000000001D /* RouteScoutUITests Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A913A9B000000000000000E /* RouteScoutUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4A913A9B0000000000000023 /* UI tests dependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A913A9B0000000000000021 /* RouteScout */;
+			targetProxy = 4A913A9B0000000000000022 /* App proxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4A913A9B0000000000000028 /* Project Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SWIFT_VERSION = 6.0;
+				SWIFT_OPTIMIZATION_LEVEL = -Onone;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+		4A913A9B0000000000000029 /* RouteScout Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Route Scout";
+				INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.navigation;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Route Scout shows your approximate position on the imported route map while you use the app.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mathowie.routescout;
+			};
+			name = Debug;
+		};
+		4A913A9B000000000000002A /* RouteScoutUITests Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mathowie.routescout.uitests;
+				TEST_TARGET_NAME = RouteScout;
+			};
+			name = Debug;
+		};
+		4A913A9B000000000000002B /* Project Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SWIFT_VERSION = 6.0;
+				SWIFT_OPTIMIZATION_LEVEL = -O;
+				DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4A913A9B000000000000002C /* RouteScout Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Route Scout";
+				INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.navigation;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Route Scout shows your approximate position on the imported route map while you use the app.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mathowie.routescout;
+			};
+			name = Release;
+		};
+		4A913A9B000000000000002D /* RouteScoutUITests Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mathowie.routescout.uitests;
+				TEST_TARGET_NAME = RouteScout;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4A913A9B0000000000000027 /* Project Configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A913A9B0000000000000028 /* Project Debug */,
+				4A913A9B000000000000002B /* Project Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A913A9B0000000000000024 /* RouteScout Configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A913A9B0000000000000029 /* RouteScout Debug */,
+				4A913A9B000000000000002C /* RouteScout Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A913A9B0000000000000025 /* RouteScoutUITests Configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A913A9B000000000000002A /* RouteScoutUITests Debug */,
+				4A913A9B000000000000002D /* RouteScoutUITests Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4A913A9B0000000000000017 /* Local package */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4A913A9B0000000000000018 /* RouteScoutCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A913A9B0000000000000017 /* Local package */;
+			productName = RouteScoutCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4A913A9B0000000000000020 /* Project object */;
+}

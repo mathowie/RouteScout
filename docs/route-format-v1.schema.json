@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Route Scout route file version 1",
+  "description": "Structure for files accepted by Route Scout's web and iPhone apps. See route-format-v1.md for semantic and import checks.",
+  "$comment": "Also check file bytes <= 2500000; IDs equal 1-based array positions; north > south and east > west; raster decoding and dimensions; UTF-16 string lengths. Unknown fields are ignored by the current apps.",
+  "type": "object",
+  "required": [
+    "version",
+    "id",
+    "name",
+    "area",
+    "steps"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Route Scout file format version."
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "pattern": "\\S",
+      "description": "Route identifier."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "\\S",
+      "description": "Displayed route name."
+    },
+    "area": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "\\S",
+      "description": "Town, neighborhood, or delivery area."
+    },
+    "effective": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 40,
+      "pattern": "^$|\\S",
+      "description": "Optional effective date. Prefer YYYY-MM-DD if known; empty, null, or omitted means unknown."
+    },
+    "miles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 5000,
+      "description": "Stated route total in miles. If null or omitted, the app sums the legs and rounds to two decimal places."
+    },
+    "map": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/map"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional embedded raster map."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1000,
+      "items": {
+        "$ref": "#/$defs/step"
+      },
+      "description": "Instructions in original travel order. Element 0 has id 1, element 1 has id 2, and so on."
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": [
+        "id",
+        "action",
+        "title",
+        "source",
+        "miles",
+        "stops",
+        "regular",
+        "centralized"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Exactly the 1-based position in the steps array. Sequential IDs require an additional check."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "north",
+            "depart",
+            "straight",
+            "left",
+            "right",
+            "bear-left",
+            "bear-right",
+            "roundabout",
+            "return",
+            "finish"
+          ],
+          "description": "Main maneuver. Retain the complete instruction in source."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140,
+          "pattern": "\\S",
+          "description": "Short road or destination label."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2400,
+          "pattern": "\\S",
+          "description": "Full instruction, preserving service work and qualifications."
+        },
+        "details": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 360,
+            "pattern": "\\S",
+            "description": "Additional note."
+          },
+          "description": "Optional notes; null or omitted becomes an empty list."
+        },
+        "miles": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Distance of this step's leg, in decimal miles. Never substitute zero for an unknown driving distance."
+        },
+        "stops": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Service stop count. Required even on driving-only routes."
+        },
+        "regular": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Regular box count."
+        },
+        "centralized": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Centralized or cluster box count."
+        },
+        "service": {
+          "type": "boolean",
+          "default": false,
+          "description": "Explicit service work even with zero counts. Any positive count also requires service."
+        },
+        "manual": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress optional GPS advance assistance for this instruction. Recommended true if its pin is unavailable or untrusted."
+        },
+        "waypoint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/point"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Checked [latitude, longitude] of the START of the instruction. Null or omitted means no pin."
+        }
+      },
+      "additionalProperties": true
+    },
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85,
+          "description": "Latitude in decimal degrees."
+        },
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "description": "Longitude in decimal degrees."
+        }
+      ],
+      "items": false
+    },
+    "map": {
+      "type": "object",
+      "required": [
+        "image",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "image": {
+          "type": "string",
+          "maxLength": 2500000,
+          "pattern": "^data:image/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$",
+          "description": "Actual decodable JPEG, PNG or WebP as Base64 with its matching media type. No external URL or placeholder text."
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 32,
+          "maximum": 5000,
+          "description": "Actual image width in pixels."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 32,
+          "maximum": 5000,
+          "description": "Actual image height in pixels."
+        },
+        "bounds": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/bounds"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional bounds aligned to the entire north-up Web Mercator image. Without bounds the map is illustrative only."
+        },
+        "attribution": {
+          "description": "The current apps show their road-reference label for true or packet-road-references; other values do not supply a custom credit."
+        }
+      },
+      "additionalProperties": true
+    },
+    "bounds": {
+      "type": "object",
+      "required": [
+        "north",
+        "south",
+        "east",
+        "west"
+      ],
+      "properties": {
+        "north": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85,
+          "description": "North edge latitude; must be greater than south."
+        },
+        "south": {
+          "type": "number",
+          "minimum": -85,
+          "maximum": 85,
+          "description": "South edge latitude; must be less than north."
+        },
+        "east": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "description": "East edge longitude; must be greater than west."
+        },
+        "west": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "description": "West edge longitude; must be less than east."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

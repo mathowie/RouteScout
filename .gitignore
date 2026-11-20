@@ -1,0 +1,16 @@
+/private/
+/.superpowers/
+/.sites-checkout/
+/.sites-checkout-*/
+/.sites-runtime/
+.env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+/ios/.build/
+/ios/.swiftpm/
+/ios/DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcresult/
