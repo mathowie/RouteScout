@@ -151,10 +151,10 @@ progress::-moz-progress-bar { background: var(--blue); border-radius: 12px; }
 .about-card { padding: clamp(24px, 5vw, 42px); }
 .about-card h1 { margin-bottom: 24px; font-size: clamp(32px, 6vw, 44px); line-height: 1.1; letter-spacing: -.045em; }
 .about-card h2 { margin: 32px 0 14px; font-size: clamp(24px, 5vw, 30px); line-height: 1.2; letter-spacing: -.035em; }
-.about-card p { color: var(--text); font-size: 17px; line-height: 1.75; }
+.about-card p, .about-card li { color: var(--text); font-size: 17px; line-height: 1.75; }
 .about-card p + p { margin-top: 22px; }
-.about-card ol { margin: 20px 0 0; padding-left: 26px; color: var(--text); font-size: 17px; line-height: 1.75; }
-.about-card li + li { margin-top: 18px; }
+.about-card ol { margin: 20px 0 0; padding-left: 26px; }
+.about-card li + li { margin-top: 22px; }
 .about-card a { color: var(--blue-deep); text-underline-offset: 3px; }
 .about-card .about-credit { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 16px; }
 .bottom-nav { display: none; }

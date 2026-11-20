@@ -1,5 +1,5 @@
 const PREFIX = 'route-scout-';
-const VERSION = PREFIX + 'shell-68880df7d771986f';
+const VERSION = PREFIX + 'shell-a9116f21f109396e';
 const shell = [
   './', './index.html', './styles.css', './app.mjs', './route.mjs', './gps.mjs', './map.mjs',
   './demo.mjs', './demo-map.png', './icon.svg', './icon-192.png', './icon-512.png', './manifest.webmanifest',
