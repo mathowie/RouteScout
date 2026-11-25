@@ -105,7 +105,8 @@
     <div class="header-inner">
       <a class="brand" href="#top">Route Scout <span>Documentation</span></a>
       <nav class="downloads" aria-label="Reference downloads">
-        <a href="examples/harbor-practice.route.json" download>Example JSON</a>
+        <a href="examples/harbor-practice.route.json" download>Harbor JSON</a>
+        <a href="examples/gregory-mailboxes.route.json" download>Gregory JSON</a>
         <a href="route-format-v1.schema.json" download>JSON Schema</a>
         <a href="route-format-v1.md" download>Markdown guide</a>
       </nav>
@@ -115,10 +116,11 @@
     <nav class="contents" aria-label="On this page">
       <p>On this page</p>
       <ul>
-        <li><a href="#quick-start">Quick start</a></li>
+<li><a href="#quick-start">Quick start</a></li>
 <li><a href="#complete-example">Complete example</a></li>
 <li><a href="#route-fields">Route fields</a></li>
 <li><a href="#step-fields">Step fields</a></li>
+<li><a href="#optional-per-mailbox-sequence-guidance">Optional per-mailbox sequence guidance</a></li>
 <li><a href="#optional-coordinates-and-maps">Optional coordinates and maps</a></li>
 <li><a href="#gps-advance-in-the-web-app">GPS advance in the web app</a></li>
 <li><a href="#file-checks">File checks</a></li>
@@ -127,8 +129,8 @@
     </nav>
     <main id="content" tabindex="-1">
       <p class="eyebrow">Format version 1</p>
-      <h1 id="route-scout-route-file-format-version-1">Route Scout route file format version 1</h1>
-<p>Use this format to turn a written route, line of travel, or list of turns into a file that Route Scout can import. It works with the web app and the native iPhone app. This is Route Scout’s own version 1 interchange format.</p>
+<h1 id="route-scout-route-file-format-version-1">Route Scout route file format version 1</h1>
+<p>Use this format to turn a written route, line of travel, or list of turns into a file that Route Scout can import. It works with the web app and the native iPhone app. Optional per-mailbox display and spoken guidance are web-only; the current native iPhone pilot imports the file but ignores <code>mailboxes</code>. This is Route Scout’s own version 1 interchange format.</p>
 <p>Save the result as UTF-8 JSON with a filename such as <code>my-route.route.json</code>. A route can contain just instructions and distances. A map and GPS coordinates are optional.</p>
 <h2 id="quick-start">Quick start</h2>
 <ol>
@@ -136,11 +138,12 @@
 <li>Create one object in <code>steps</code> for each instruction. Number the objects <code>1, 2, 3, …</code> in their array order.</li>
 <li>Express distances in <strong>decimal miles</strong>, and keep the complete instruction in <code>source</code>.</li>
 <li>Include the three count fields on every step. Use <code>service: true</code> for an instruction that requires delivery work, even when its counts are zero.</li>
+<li>Optionally add <code>mailboxes</code> to service steps when actual delivery sequence ranges are supplied. Include every source stop in order, using <code>sequence: null</code> for an unknown range. Never use Line of Travel Order as a delivery sequence.</li>
 <li>If coordinates are unavailable, use <code>waypoint: null</code> and <code>manual: true</code>. If no aligned map is available, use <code>map: null</code>.</li>
 </ol>
 <p>Start with the complete <a href="examples/harbor-practice.route.json">example route</a>. The <a href="route-format-v1.schema.json">JSON Schema</a> describes field types and limits for software that creates files.</p>
 <h2 id="complete-example">Complete example</h2>
-<p>This fictional route is ready to import. Its distances total 1 mile. It includes driving instructions, a delivery step, a return trip, and an arrival instruction. It needs no coordinates or map.</p>
+<p>This fictional route is ready to import. Its distances total 1 mile. It includes driving instructions, a delivery step, a return trip, and an arrival instruction. It needs no coordinates or map. Its single mailbox prompt uses the fictional inclusive range 450–461 for the 12 centralized boxes.</p>
 <pre><code class="language-json">{
   &quot;version&quot;: 1,
   &quot;id&quot;: &quot;HARBOR-PRACTICE&quot;,
@@ -183,14 +186,25 @@
       &quot;action&quot;: &quot;left&quot;,
       &quot;title&quot;: &quot;Pine Court mailboxes&quot;,
       &quot;source&quot;: &quot;Turn left into Pine Court. Service the 12 centralized boxes at the mailbox stop. Continue for 0.05 miles to the exit.&quot;,
-      &quot;details&quot;: [&quot;One delivery stop with 12 centralized boxes.&quot;],
+      &quot;details&quot;: [
+        &quot;One delivery stop with 12 centralized boxes.&quot;
+      ],
       &quot;miles&quot;: 0.05,
       &quot;stops&quot;: 1,
       &quot;regular&quot;: 0,
       &quot;centralized&quot;: 12,
       &quot;service&quot;: true,
       &quot;manual&quot;: true,
-      &quot;waypoint&quot;: null
+      &quot;waypoint&quot;: null,
+      &quot;mailboxes&quot;: [
+        {
+          &quot;label&quot;: &quot;Pine Court cluster&quot;,
+          &quot;sequence&quot;: {
+            &quot;start&quot;: 450,
+            &quot;end&quot;: 461
+          }
+        }
+      ]
     },
     {
       &quot;id&quot;: 4,
@@ -225,13 +239,13 @@
 </code></pre>
 <h2 id="route-fields">Route fields</h2>
 <p>The file contains one JSON object.</p>
-<div class="table-wrap" role="region" aria-label="Route fields table" tabindex="0"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
-<th scope="col">Field</th>
-<th scope="col">Required</th>
-<th scope="col">Type and limit</th>
-<th scope="col">Meaning</th>
+<th>Field</th>
+<th>Required</th>
+<th>Type and limit</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
@@ -288,13 +302,13 @@
 <p>Use the source’s stated total mileage when it supplies one. A printed total may differ slightly from the sum of rounded leg distances. Keep that total and the original leg distances rather than changing them to make the numbers agree.</p>
 <h2 id="step-fields">Step fields</h2>
 <p>Each object in <code>steps</code> has these fields. The required count fields also appear on routes used only for driving.</p>
-<div class="table-wrap" role="region" aria-label="Step fields table" tabindex="0"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
-<th scope="col">Field</th>
-<th scope="col">Required</th>
-<th scope="col">Type and limit</th>
-<th scope="col">Meaning</th>
+<th>Field</th>
+<th>Required</th>
+<th>Type and limit</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
@@ -347,6 +361,12 @@
 <td>Number of centralized or cluster boxes served on this step.</td>
 </tr>
 <tr>
+<td><code>mailboxes</code></td>
+<td>No</td>
+<td>Ordered array of up to 1,000 mailbox objects, or <code>null</code></td>
+<td>Optional per-mailbox guidance for service steps; see below. Omitted, <code>null</code>, or <code>[]</code> retains whole-step behavior.</td>
+</tr>
+<tr>
 <td><code>details</code></td>
 <td>No</td>
 <td>Array of up to 16 nonblank strings, each up to 360</td>
@@ -375,11 +395,11 @@
 <p>Text limits are measured in UTF-16 code units by both importers; ordinary letters usually count as one and emoji may count as two. Keep text below these limits and preserve all necessary instructions.</p>
 <h3 id="allowed-actions">Allowed actions</h3>
 <p>Action strings are lowercase and must match exactly.</p>
-<div class="table-wrap" role="region" aria-label="Allowed actions table" tabindex="0"><table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
-<th scope="col">Value</th>
-<th scope="col">Use</th>
+<th>Value</th>
+<th>Use</th>
 </tr>
 </thead>
 <tbody>
@@ -431,6 +451,137 @@
 <p>Convert feet to miles by dividing by <strong>5,280</strong>, meters by <strong>1,609.344</strong>, and kilometers by <strong>1.609344</strong>. Preserve useful precision. A stationary service or final arrival instruction can have <code>miles: 0</code>. Ask for missing driving distances; do not silently substitute zero, estimate blocks, or invent distances. All numbers must be JSON numbers, such as <code>0.25</code>, without units or quotes.</p>
 <p>The app treats a step as service when <strong><code>service</code> is true OR any of <code>stops</code>, <code>regular</code>, or <code>centralized</code> is greater than zero</strong>. A false flag cannot override positive counts. A driving-only step uses zero for all three counts. If the source specifies service but gives no counts, use <code>service: true</code>, keep counts at zero, and add a note such as <code>&quot;Service counts not specified in source.&quot;</code> to <code>details</code>. Stops and boxes are separate quantities; do not infer one from the other.</p>
 <p>Keep compound instructions together when preserving the source’s numbered rows. The one <code>action</code> represents the main maneuver; <code>source</code> and <code>details</code> retain any additional turns, mailbox work, or exceptions. If the source’s numbers have gaps or do not start at 1, assign consecutive JSON IDs and retain the original numbers in <code>details</code>. Do not merge repeated streets, remove loops, optimize the order, or allocate a compound leg’s distance among new steps without supplied distances.</p>
+<h2 id="optional-per-mailbox-sequence-guidance">Optional per-mailbox sequence guidance</h2>
+<p>Use <code>step.mailboxes</code> for physical mailboxes or clusters visited within one source instruction. Keep the source step, mileage, and counts intact. Files without this field continue to work normally. Omitted, <code>null</code>, and <code>[]</code> all mean no per-mailbox guidance.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mailbox field</th>
+<th>Required</th>
+<th>Type and limit</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>label</code></td>
+<td>No</td>
+<td>Nonblank string, at most 140 UTF-16 code units</td>
+<td>Location label. If omitted, the web app uses <code>Mailbox N</code>, with N starting at 1 in this step. A supplied blank string or <code>null</code> is invalid.</td>
+</tr>
+<tr>
+<td><code>sequence</code></td>
+<td>No</td>
+<td>Object with both <code>start</code> and <code>end</code>, or <code>null</code></td>
+<td>Inclusive delivery sequence range. Omitted or <code>null</code> means unknown.</td>
+</tr>
+<tr>
+<td><code>sequence.start</code></td>
+<td>Yes, within a sequence object</td>
+<td>Integer, 1–999,999</td>
+<td>First sequence number.</td>
+</tr>
+<tr>
+<td><code>sequence.end</code></td>
+<td>Yes, within a sequence object</td>
+<td>Integer, 1–999,999, at least <code>start</code></td>
+<td>Last sequence number. Equal endpoints identify one number.</td>
+</tr>
+</tbody>
+</table></div>
+<p>A nonempty array is allowed only when <code>service === true</code> or at least one existing count (<code>stops</code>, <code>regular</code>, <code>centralized</code>) is positive. If <code>stops &gt; 0</code>, the array must contain <strong>exactly <code>stops</code> entries</strong>. When only some ranges are known, include an entry with <code>sequence: null</code> for every unknown range so the web app does not skip an actual source stop. If the source stop count is unspecified, keep the required <code>stops</code> field at zero: an explicit service flag or positive box count permits a list that defines the prompts without rewriting any source counts. Stops and individual boxes are different quantities.</p>
+<p>Preserve the array’s service order, repeated ranges, and retraces. Use a source that explicitly maps delivery sequence numbers to each physical mailbox or cluster. If that mapping is missing or unclear, ask for the actual range source and use <code>sequence: null</code> for unknown ranges. Never sort, deduplicate, or infer ranges from neighboring entries, addresses, instruction numbers, box counts, or cumulative counts. <strong>Never use Line of Travel Order as a delivery sequence.</strong> All ranges and counts in these public examples are fictional.</p>
+<h3 id="one-mailbox-at-a-time-in-the-web-app">One mailbox at a time in the web app</h3>
+<p>The web app shows one selected mailbox, its position within the step, and its range. Next confirms that mailbox and selects the next; the route advances only after the last mailbox. Back, Repeat, and saved progress retain the selected mailbox position. Moving within the step speaks only the selected mailbox reminder; turn instructions are spoken on entering the step and with Repeat. Delivery steps still require manual confirmation.</p>
+<p>For range 680–712, the reminder is “Check the van for packages with sequence numbers 680 through 712.” A single number uses singular wording; an unknown range is identified without invented numbers. This is a reminder to check, not a claim that packages exist. Sequence ranges do not infer package quantities or change service counts. The current native iPhone pilot ignores this metadata and provides no per-mailbox UI or voice guidance.</p>
+<h3 id="complete-fictional-gregory-example">Complete fictional Gregory example</h3>
+<p>Download <a href="examples/gregory-mailboxes.route.json">Gregory mailbox practice route</a> to try two prompts within one step. This complete fictional route totals 1 mile. Its service step has <code>stops: 2</code>, <code>regular: 0</code>, and <code>centralized: 45</code>, with ranges 680–712 and 713–724. The explicit fictional box count is separate from delivery sequence guidance. Every step uses <code>manual: true</code> and <code>waypoint: null</code>; the route uses <code>map: null</code>.</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;id&quot;: &quot;GREGORY-MAILBOXES&quot;,
+  &quot;name&quot;: &quot;Gregory mailbox practice route&quot;,
+  &quot;area&quot;: &quot;Fictional Gregory Village&quot;,
+  &quot;effective&quot;: &quot;&quot;,
+  &quot;miles&quot;: 1.0,
+  &quot;map&quot;: null,
+  &quot;steps&quot;: [
+    {
+      &quot;id&quot;: 1,
+      &quot;action&quot;: &quot;depart&quot;,
+      &quot;title&quot;: &quot;Gregory Depot&quot;,
+      &quot;source&quot;: &quot;Leave Gregory Depot heading east on Depot Lane. Continue for 0.20 miles.&quot;,
+      &quot;details&quot;: [],
+      &quot;miles&quot;: 0.2,
+      &quot;stops&quot;: 0,
+      &quot;regular&quot;: 0,
+      &quot;centralized&quot;: 0,
+      &quot;service&quot;: false,
+      &quot;manual&quot;: true,
+      &quot;waypoint&quot;: null
+    },
+    {
+      &quot;id&quot;: 2,
+      &quot;action&quot;: &quot;left&quot;,
+      &quot;title&quot;: &quot;Gregory Street mailboxes&quot;,
+      &quot;source&quot;: &quot;Turn left onto Gregory Street. Service two mailbox clusters with 45 centralized boxes in total, in the listed order. Continue for 0.30 miles.&quot;,
+      &quot;details&quot;: [
+        &quot;Fictional counts and delivery sequence ranges for practice only.&quot;
+      ],
+      &quot;miles&quot;: 0.3,
+      &quot;stops&quot;: 2,
+      &quot;regular&quot;: 0,
+      &quot;centralized&quot;: 45,
+      &quot;service&quot;: true,
+      &quot;manual&quot;: true,
+      &quot;waypoint&quot;: null,
+      &quot;mailboxes&quot;: [
+        {
+          &quot;label&quot;: &quot;Gregory west cluster&quot;,
+          &quot;sequence&quot;: {
+            &quot;start&quot;: 680,
+            &quot;end&quot;: 712
+          }
+        },
+        {
+          &quot;label&quot;: &quot;Gregory east cluster&quot;,
+          &quot;sequence&quot;: {
+            &quot;start&quot;: 713,
+            &quot;end&quot;: 724
+          }
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: 3,
+      &quot;action&quot;: &quot;return&quot;,
+      &quot;title&quot;: &quot;Gregory Depot&quot;,
+      &quot;source&quot;: &quot;Return to Gregory Depot along Loop Road. Travel 0.50 miles.&quot;,
+      &quot;details&quot;: [],
+      &quot;miles&quot;: 0.5,
+      &quot;stops&quot;: 0,
+      &quot;regular&quot;: 0,
+      &quot;centralized&quot;: 0,
+      &quot;service&quot;: false,
+      &quot;manual&quot;: true,
+      &quot;waypoint&quot;: null
+    },
+    {
+      &quot;id&quot;: 4,
+      &quot;action&quot;: &quot;finish&quot;,
+      &quot;title&quot;: &quot;End at Gregory Depot&quot;,
+      &quot;source&quot;: &quot;Arrive at Gregory Depot. This is the end of the route.&quot;,
+      &quot;details&quot;: [],
+      &quot;miles&quot;: 0,
+      &quot;stops&quot;: 0,
+      &quot;regular&quot;: 0,
+      &quot;centralized&quot;: 0,
+      &quot;service&quot;: false,
+      &quot;manual&quot;: true,
+      &quot;waypoint&quot;: null
+    }
+  ]
+}
+</code></pre>
 <h2 id="optional-coordinates-and-maps">Optional coordinates and maps</h2>
 <p>A waypoint is a geographic coordinate in <strong>latitude, longitude</strong> order, in decimal degrees. Latitude must be between −85 and 85, and longitude between −180 and 180. For “turn left onto Elm Street,” the pin belongs at that turn, where the instruction starts. It is not the end of Elm Street, a pixel position, or a route polyline. Use supplied or checked coordinates; set <code>waypoint: null</code> and <code>manual: true</code> when unsure.</p>
 <p>A map is optional. An embedded map has this shape. Replace the image placeholder with actual Base64 data and the illustrative bounds with the calibrated bounds for that image before import:</p>
@@ -466,7 +617,7 @@
 <p>Advance detection first needs an accurate fix near the current step’s start, then repeated fixes near the next step’s start. Starting halfway through a leg may never arm detection; use the step buttons when needed. Weak or stale GPS can also prevent advance. For reference, eligible anchors must be at least 70 m and less than 3,000 m apart; detection requires location accuracy of 24 m or better, a fix within 31 m of the current anchor, then two fixes within 26 m of the next anchor, 750 ms–10 s apart, after leaving the current anchor’s 31 m area.</p>
 <h2 id="file-checks">File checks</h2>
 <p>Use double quotes, plain JSON booleans, and finite numbers. Include no comments, trailing commas, duplicate object keys, <code>NaN</code>, or <code>Infinity</code>. Optional <code>service</code> and <code>manual</code> fields must be omitted or contain booleans; <code>null</code> is invalid for them. Unknown fields do not add behavior to the current apps.</p>
-<p>Before importing, check that each <code>id</code> matches its array position, every source instruction appears in order, and any supplied map can decode with matching dimensions and correct bounds. The schema checks shape and numeric ranges using <a href="https://json-schema.org/draft/2020-12">JSON Schema Draft 2020-12</a>. It does not check sequential step IDs, coordinate accuracy, image decoding, total file bytes, or the apps’ UTF-16 text limits. Passing schema validation alone does not verify the route on the ground.</p>
+<p>Before importing, check that each <code>id</code> matches its array position, every source instruction appears in order, and any supplied map can decode with matching dimensions and correct bounds. The schema checks shape and numeric ranges using <a href="https://json-schema.org/draft/2020-12">JSON Schema Draft 2020-12</a>. It does not check sequential step IDs, mailbox array length against positive <code>stops</code>, <code>sequence.end &gt;= sequence.start</code>, coordinate accuracy, image decoding, total file bytes, or the apps’ UTF-16 text limits. Check those separately; the web importer enforces the mailbox rules, while the current native pilot ignores this field. Passing schema validation alone does not verify the route on the ground.</p>
 <h2 id="prompt-for-chatgpt">Prompt for ChatGPT</h2>
 <p>Give ChatGPT this document and the source directions. The schema and example file are useful additional attachments. Copy this prompt:</p>
 <pre><code class="language-text">Convert the attached route directions into a Route Scout version 1 .route.json file, following the attached “Route Scout route file format version 1” document.
@@ -477,12 +628,20 @@ Use consecutive step IDs starting at 1 and only the documented action values. Us
 
 Include stops, regular, and centralized on every step. Use zero for driving-only steps. If service is required but counts are not given, set service to true, keep the counts at zero, and note that the source does not specify counts in details.
 
+Only add optional mailbox ranges from a source that explicitly maps delivery sequence numbers to each physical mailbox or cluster. Never use Line of Travel Order, instruction IDs, box counts, cumulative counts, or adjacent ranges to infer delivery sequence numbers. Ask for the actual range source if that mapping is missing or unclear. Keep each step and its counts unchanged. A nonempty mailboxes array requires service: true or a positive existing count. With stops &gt; 0, include exactly stops entries in source service order, using sequence: null for every unknown range; never skip an actual source stop. With an unspecified stop count, keep stops: 0 and require service: true or positive box counts. Preserve repeated ranges and retraces.
+
+Limit mailboxes to 1,000 entries per step. Each optional label must be nonblank and at most 140 UTF-16 code units; omit it for the default Mailbox N label, never supply null or blank. Each optional sequence is null/omitted for unknown, or an object requiring BOTH start and end as integers 1 through 999999, inclusive, with end &gt;= start. Do not infer package quantities or claim packages exist. This guidance is web-only; the current native iPhone pilot ignores mailboxes.
+
 Use map: null unless I supply a correctly encoded and aligned map. Use waypoint: null and manual: true unless I supply checked coordinates for the start of each instruction. Preserve any extra delivery notes in details.
 
-Validate the result against the document and, if available, the attached JSON Schema. Also check step order and sequential IDs, which the schema alone does not enforce. Do not claim a validation tool or import was run unless you actually ran it.
+Validate the result against the document and, if available, the attached JSON Schema. Also check step order, sequential IDs, mailbox count against positive stops, sequence end &gt;= start, and UTF-16 text limits, which the schema alone does not enforce. Do not claim a validation tool or import was run unless you actually ran it.
 
 Once ambiguities are resolved, provide the complete JSON as a downloadable file named my-route.route.json if file creation is available. Otherwise provide one complete JSON code block that I can save under that name. Keep explanations outside the JSON.
 </code></pre>
+
+
+
+
 
       <footer>Route Scout file format reference. <a href="#top">Back to top</a></footer>
     </main>

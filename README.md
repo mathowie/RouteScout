@@ -16,6 +16,22 @@ directions with ChatGPT. The [example route](docs/examples/harbor-practice.route
 can be imported directly. A [JSON Schema](docs/route-format-v1.schema.json) is
 included for tools that generate route files. Maps and coordinates are optional.
 
+Service steps can optionally include ordered `mailboxes` with delivery sequence
+ranges. The web app shows and speaks one selected mailbox at a time. Next
+confirms that mailbox; the route advances after the last one. Back, Repeat,
+and saved progress retain the mailbox position. The reminder asks you to check
+the van for packages in that range; it does not claim packages exist or infer
+package counts. Try the complete [fictional Gregory example](docs/examples/gregory-mailboxes.route.json).
+
+For positive `stops`, include exactly that many mailbox entries, using
+`sequence: null` for unknown ranges. Keep source counts and order, including
+retraces. Use a source that explicitly maps delivery sequence numbers to each
+physical mailbox or cluster. Ask for the actual range source when that mapping
+is missing or unclear. Never use Line of Travel Order as a delivery sequence
+or infer ranges from box counts or cumulative counts. Files without mailbox
+data work normally. The current native iPhone pilot imports these
+files but ignores `mailboxes`; per-mailbox display and voice are web-only.
+
 ## Native iPhone app
 
 Open [`ios/RouteScout.xcodeproj`](ios/RouteScout.xcodeproj) in Xcode and run the

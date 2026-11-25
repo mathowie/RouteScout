@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Route Scout route file version 1",
-  "description": "Structure for files accepted by Route Scout's web and iPhone apps. See route-format-v1.md for semantic and import checks.",
-  "$comment": "Also check file bytes <= 2500000; IDs equal 1-based array positions; north > south and east > west; raster decoding and dimensions; UTF-16 string lengths. Unknown fields are ignored by the current apps.",
+  "description": "Route Scout version 1 route structure. Per-mailbox guidance is supported by the web app; the current native iPhone pilot ignores mailboxes. See route-format-v1.md for semantic and import checks.",
+  "$comment": "Also check file bytes <= 2500000; IDs equal 1-based array positions; north > south and east > west; raster decoding and dimensions; UTF-16 string lengths. Unknown fields are ignored by the current apps. For nonempty mailboxes, verify length equals stops when stops > 0; sequence.end >= sequence.start. JSON Schema maxLength counts Unicode code points, while the importer enforces UTF-16 code units.",
   "type": "object",
   "required": [
     "version",
@@ -187,9 +187,79 @@
             }
           ],
           "description": "Checked [latitude, longitude] of the START of the instruction. Null or omitted means no pin."
+        },
+        "mailboxes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "maxItems": 1000,
+          "items": {
+            "$ref": "#/$defs/mailbox"
+          },
+          "description": "Optional mailbox prompts in source service order. Omitted, null or [] keeps whole-step guidance. A nonempty array requires service === true or a positive stops, regular or centralized count. If stops > 0, length must equal stops; include sequence: null for unknown ranges. With stops = 0, an explicit list defines prompts without changing source counts. Preserve repeated ranges and retraces."
         }
       },
-      "additionalProperties": true
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "mailboxes"
+            ],
+            "properties": {
+              "mailboxes": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "service"
+                ],
+                "properties": {
+                  "service": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "required": [
+                  "stops"
+                ],
+                "properties": {
+                  "stops": {
+                    "exclusiveMinimum": 0
+                  }
+                }
+              },
+              {
+                "required": [
+                  "regular"
+                ],
+                "properties": {
+                  "regular": {
+                    "exclusiveMinimum": 0
+                  }
+                }
+              },
+              {
+                "required": [
+                  "centralized"
+                ],
+                "properties": {
+                  "centralized": {
+                    "exclusiveMinimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
     },
     "point": {
       "type": "array",
@@ -288,6 +358,51 @@
           "description": "West edge longitude; must be less than east."
         }
       },
+      "additionalProperties": true
+    },
+    "mailbox": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140,
+          "pattern": "\\S",
+          "description": "Optional nonblank location label, at most 140 UTF-16 code units. Omitted defaults to Mailbox N (1-based position); supplied null or blank is invalid."
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sequence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional inclusive delivery sequence range; omitted or null means unknown. Never infer it from counts or Line of Travel Order."
+        }
+      },
+      "additionalProperties": true
+    },
+    "sequence": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999999
+        }
+      },
+      "$comment": "Additional semantic check: end must be greater than or equal to start. Equal endpoints identify a single sequence number.",
       "additionalProperties": true
     }
   }

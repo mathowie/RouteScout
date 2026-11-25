@@ -1,6 +1,6 @@
 # Route Scout route file format version 1
 
-Use this format to turn a written route, line of travel, or list of turns into a file that Route Scout can import. It works with the web app and the native iPhone app. This is Route Scout’s own version 1 interchange format.
+Use this format to turn a written route, line of travel, or list of turns into a file that Route Scout can import. It works with the web app and the native iPhone app. Optional per-mailbox display and spoken guidance are web-only; the current native iPhone pilot imports the file but ignores `mailboxes`. This is Route Scout’s own version 1 interchange format.
 
 Save the result as UTF-8 JSON with a filename such as `my-route.route.json`. A route can contain just instructions and distances. A map and GPS coordinates are optional.
 
@@ -10,13 +10,14 @@ Save the result as UTF-8 JSON with a filename such as `my-route.route.json`. A r
 2. Create one object in `steps` for each instruction. Number the objects `1, 2, 3, …` in their array order.
 3. Express distances in **decimal miles**, and keep the complete instruction in `source`.
 4. Include the three count fields on every step. Use `service: true` for an instruction that requires delivery work, even when its counts are zero.
-5. If coordinates are unavailable, use `waypoint: null` and `manual: true`. If no aligned map is available, use `map: null`.
+5. Optionally add `mailboxes` to service steps when actual delivery sequence ranges are supplied. Include every source stop in order, using `sequence: null` for an unknown range. Never use Line of Travel Order as a delivery sequence.
+6. If coordinates are unavailable, use `waypoint: null` and `manual: true`. If no aligned map is available, use `map: null`.
 
 Start with the complete [example route](examples/harbor-practice.route.json). The [JSON Schema](route-format-v1.schema.json) describes field types and limits for software that creates files.
 
 ## Complete example
 
-This fictional route is ready to import. Its distances total 1 mile. It includes driving instructions, a delivery step, a return trip, and an arrival instruction. It needs no coordinates or map.
+This fictional route is ready to import. Its distances total 1 mile. It includes driving instructions, a delivery step, a return trip, and an arrival instruction. It needs no coordinates or map. Its single mailbox prompt uses the fictional inclusive range 450–461 for the 12 centralized boxes.
 
 ```json
 {
@@ -61,14 +62,25 @@ This fictional route is ready to import. Its distances total 1 mile. It includes
       "action": "left",
       "title": "Pine Court mailboxes",
       "source": "Turn left into Pine Court. Service the 12 centralized boxes at the mailbox stop. Continue for 0.05 miles to the exit.",
-      "details": ["One delivery stop with 12 centralized boxes."],
+      "details": [
+        "One delivery stop with 12 centralized boxes."
+      ],
       "miles": 0.05,
       "stops": 1,
       "regular": 0,
       "centralized": 12,
       "service": true,
       "manual": true,
-      "waypoint": null
+      "waypoint": null,
+      "mailboxes": [
+        {
+          "label": "Pine Court cluster",
+          "sequence": {
+            "start": 450,
+            "end": 461
+          }
+        }
+      ]
     },
     {
       "id": 4,
@@ -133,6 +145,7 @@ Each object in `steps` has these fields. The required count fields also appear o
 | `stops` | Yes | Integer, 0–1,000 | Number of service stops on this step. |
 | `regular` | Yes | Integer, 0–10,000 | Number of regular boxes served on this step. |
 | `centralized` | Yes | Integer, 0–10,000 | Number of centralized or cluster boxes served on this step. |
+| `mailboxes` | No | Ordered array of up to 1,000 mailbox objects, or `null` | Optional per-mailbox guidance for service steps; see below. Omitted, `null`, or `[]` retains whole-step behavior. |
 | `details` | No | Array of up to 16 nonblank strings, each up to 360 | Extra notes. Omitted or `null` becomes an empty list. |
 | `service` | No | Boolean, default `false` | Explicitly marks delivery work even if all counts are zero. If supplied, it must be `true` or `false`. |
 | `manual` | No | Boolean, default `false` | Excludes this step from the web app’s optional GPS advance assistance and suppresses its distance estimate. Set `true` when the pin is missing or unreliable. The current iPhone pilot advances every step manually. |
@@ -168,6 +181,119 @@ Convert feet to miles by dividing by **5,280**, meters by **1,609.344**, and kil
 The app treats a step as service when **`service` is true OR any of `stops`, `regular`, or `centralized` is greater than zero**. A false flag cannot override positive counts. A driving-only step uses zero for all three counts. If the source specifies service but gives no counts, use `service: true`, keep counts at zero, and add a note such as `"Service counts not specified in source."` to `details`. Stops and boxes are separate quantities; do not infer one from the other.
 
 Keep compound instructions together when preserving the source’s numbered rows. The one `action` represents the main maneuver; `source` and `details` retain any additional turns, mailbox work, or exceptions. If the source’s numbers have gaps or do not start at 1, assign consecutive JSON IDs and retain the original numbers in `details`. Do not merge repeated streets, remove loops, optimize the order, or allocate a compound leg’s distance among new steps without supplied distances.
+
+## Optional per-mailbox sequence guidance
+
+Use `step.mailboxes` for physical mailboxes or clusters visited within one source instruction. Keep the source step, mileage, and counts intact. Files without this field continue to work normally. Omitted, `null`, and `[]` all mean no per-mailbox guidance.
+
+| Mailbox field | Required | Type and limit | Meaning |
+| --- | --- | --- | --- |
+| `label` | No | Nonblank string, at most 140 UTF-16 code units | Location label. If omitted, the web app uses `Mailbox N`, with N starting at 1 in this step. A supplied blank string or `null` is invalid. |
+| `sequence` | No | Object with both `start` and `end`, or `null` | Inclusive delivery sequence range. Omitted or `null` means unknown. |
+| `sequence.start` | Yes, within a sequence object | Integer, 1–999,999 | First sequence number. |
+| `sequence.end` | Yes, within a sequence object | Integer, 1–999,999, at least `start` | Last sequence number. Equal endpoints identify one number. |
+
+A nonempty array is allowed only when `service === true` or at least one existing count (`stops`, `regular`, `centralized`) is positive. If `stops > 0`, the array must contain **exactly `stops` entries**. When only some ranges are known, include an entry with `sequence: null` for every unknown range so the web app does not skip an actual source stop. If the source stop count is unspecified, keep the required `stops` field at zero: an explicit service flag or positive box count permits a list that defines the prompts without rewriting any source counts. Stops and individual boxes are different quantities.
+
+Preserve the array’s service order, repeated ranges, and retraces. Use a source that explicitly maps delivery sequence numbers to each physical mailbox or cluster. If that mapping is missing or unclear, ask for the actual range source and use `sequence: null` for unknown ranges. Never sort, deduplicate, or infer ranges from neighboring entries, addresses, instruction numbers, box counts, or cumulative counts. **Never use Line of Travel Order as a delivery sequence.** All ranges and counts in these public examples are fictional.
+
+### One mailbox at a time in the web app
+
+The web app shows one selected mailbox, its position within the step, and its range. Next confirms that mailbox and selects the next; the route advances only after the last mailbox. Back, Repeat, and saved progress retain the selected mailbox position. Moving within the step speaks only the selected mailbox reminder; turn instructions are spoken on entering the step and with Repeat. Delivery steps still require manual confirmation.
+
+For range 680–712, the reminder is “Check the van for packages with sequence numbers 680 through 712.” A single number uses singular wording; an unknown range is identified without invented numbers. This is a reminder to check, not a claim that packages exist. Sequence ranges do not infer package quantities or change service counts. The current native iPhone pilot ignores this metadata and provides no per-mailbox UI or voice guidance.
+
+### Complete fictional Gregory example
+
+Download [Gregory mailbox practice route](examples/gregory-mailboxes.route.json) to try two prompts within one step. This complete fictional route totals 1 mile. Its service step has `stops: 2`, `regular: 0`, and `centralized: 45`, with ranges 680–712 and 713–724. The explicit fictional box count is separate from delivery sequence guidance. Every step uses `manual: true` and `waypoint: null`; the route uses `map: null`.
+
+```json
+{
+  "version": 1,
+  "id": "GREGORY-MAILBOXES",
+  "name": "Gregory mailbox practice route",
+  "area": "Fictional Gregory Village",
+  "effective": "",
+  "miles": 1.0,
+  "map": null,
+  "steps": [
+    {
+      "id": 1,
+      "action": "depart",
+      "title": "Gregory Depot",
+      "source": "Leave Gregory Depot heading east on Depot Lane. Continue for 0.20 miles.",
+      "details": [],
+      "miles": 0.2,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 2,
+      "action": "left",
+      "title": "Gregory Street mailboxes",
+      "source": "Turn left onto Gregory Street. Service two mailbox clusters with 45 centralized boxes in total, in the listed order. Continue for 0.30 miles.",
+      "details": [
+        "Fictional counts and delivery sequence ranges for practice only."
+      ],
+      "miles": 0.3,
+      "stops": 2,
+      "regular": 0,
+      "centralized": 45,
+      "service": true,
+      "manual": true,
+      "waypoint": null,
+      "mailboxes": [
+        {
+          "label": "Gregory west cluster",
+          "sequence": {
+            "start": 680,
+            "end": 712
+          }
+        },
+        {
+          "label": "Gregory east cluster",
+          "sequence": {
+            "start": 713,
+            "end": 724
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "action": "return",
+      "title": "Gregory Depot",
+      "source": "Return to Gregory Depot along Loop Road. Travel 0.50 miles.",
+      "details": [],
+      "miles": 0.5,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 4,
+      "action": "finish",
+      "title": "End at Gregory Depot",
+      "source": "Arrive at Gregory Depot. This is the end of the route.",
+      "details": [],
+      "miles": 0,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    }
+  ]
+}
+```
 
 ## Optional coordinates and maps
 
@@ -214,7 +340,7 @@ Advance detection first needs an accurate fix near the current step’s start, t
 
 Use double quotes, plain JSON booleans, and finite numbers. Include no comments, trailing commas, duplicate object keys, `NaN`, or `Infinity`. Optional `service` and `manual` fields must be omitted or contain booleans; `null` is invalid for them. Unknown fields do not add behavior to the current apps.
 
-Before importing, check that each `id` matches its array position, every source instruction appears in order, and any supplied map can decode with matching dimensions and correct bounds. The schema checks shape and numeric ranges using [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12). It does not check sequential step IDs, coordinate accuracy, image decoding, total file bytes, or the apps’ UTF-16 text limits. Passing schema validation alone does not verify the route on the ground.
+Before importing, check that each `id` matches its array position, every source instruction appears in order, and any supplied map can decode with matching dimensions and correct bounds. The schema checks shape and numeric ranges using [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12). It does not check sequential step IDs, mailbox array length against positive `stops`, `sequence.end >= sequence.start`, coordinate accuracy, image decoding, total file bytes, or the apps’ UTF-16 text limits. Check those separately; the web importer enforces the mailbox rules, while the current native pilot ignores this field. Passing schema validation alone does not verify the route on the ground.
 
 ## Prompt for ChatGPT
 
@@ -229,9 +355,13 @@ Use consecutive step IDs starting at 1 and only the documented action values. Us
 
 Include stops, regular, and centralized on every step. Use zero for driving-only steps. If service is required but counts are not given, set service to true, keep the counts at zero, and note that the source does not specify counts in details.
 
+Only add optional mailbox ranges from a source that explicitly maps delivery sequence numbers to each physical mailbox or cluster. Never use Line of Travel Order, instruction IDs, box counts, cumulative counts, or adjacent ranges to infer delivery sequence numbers. Ask for the actual range source if that mapping is missing or unclear. Keep each step and its counts unchanged. A nonempty mailboxes array requires service: true or a positive existing count. With stops > 0, include exactly stops entries in source service order, using sequence: null for every unknown range; never skip an actual source stop. With an unspecified stop count, keep stops: 0 and require service: true or positive box counts. Preserve repeated ranges and retraces.
+
+Limit mailboxes to 1,000 entries per step. Each optional label must be nonblank and at most 140 UTF-16 code units; omit it for the default Mailbox N label, never supply null or blank. Each optional sequence is null/omitted for unknown, or an object requiring BOTH start and end as integers 1 through 999999, inclusive, with end >= start. Do not infer package quantities or claim packages exist. This guidance is web-only; the current native iPhone pilot ignores mailboxes.
+
 Use map: null unless I supply a correctly encoded and aligned map. Use waypoint: null and manual: true unless I supply checked coordinates for the start of each instruction. Preserve any extra delivery notes in details.
 
-Validate the result against the document and, if available, the attached JSON Schema. Also check step order and sequential IDs, which the schema alone does not enforce. Do not claim a validation tool or import was run unless you actually ran it.
+Validate the result against the document and, if available, the attached JSON Schema. Also check step order, sequential IDs, mailbox count against positive stops, sequence end >= start, and UTF-16 text limits, which the schema alone does not enforce. Do not claim a validation tool or import was run unless you actually ran it.
 
 Once ambiguities are resolved, provide the complete JSON as a downloadable file named my-route.route.json if file creation is available. Otherwise provide one complete JSON code block that I can save under that name. Keep explanations outside the JSON.
 ```

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "id": "GREGORY-MAILBOXES",
+  "name": "Gregory mailbox practice route",
+  "area": "Fictional Gregory Village",
+  "effective": "",
+  "miles": 1.0,
+  "map": null,
+  "steps": [
+    {
+      "id": 1,
+      "action": "depart",
+      "title": "Gregory Depot",
+      "source": "Leave Gregory Depot heading east on Depot Lane. Continue for 0.20 miles.",
+      "details": [],
+      "miles": 0.2,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 2,
+      "action": "left",
+      "title": "Gregory Street mailboxes",
+      "source": "Turn left onto Gregory Street. Service two mailbox clusters with 45 centralized boxes in total, in the listed order. Continue for 0.30 miles.",
+      "details": [
+        "Fictional counts and delivery sequence ranges for practice only."
+      ],
+      "miles": 0.3,
+      "stops": 2,
+      "regular": 0,
+      "centralized": 45,
+      "service": true,
+      "manual": true,
+      "waypoint": null,
+      "mailboxes": [
+        {
+          "label": "Gregory west cluster",
+          "sequence": {
+            "start": 680,
+            "end": 712
+          }
+        },
+        {
+          "label": "Gregory east cluster",
+          "sequence": {
+            "start": 713,
+            "end": 724
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "action": "return",
+      "title": "Gregory Depot",
+      "source": "Return to Gregory Depot along Loop Road. Travel 0.50 miles.",
+      "details": [],
+      "miles": 0.5,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    },
+    {
+      "id": 4,
+      "action": "finish",
+      "title": "End at Gregory Depot",
+      "source": "Arrive at Gregory Depot. This is the end of the route.",
+      "details": [],
+      "miles": 0,
+      "stops": 0,
+      "regular": 0,
+      "centralized": 0,
+      "service": false,
+      "manual": true,
+      "waypoint": null
+    }
+  ]
+}

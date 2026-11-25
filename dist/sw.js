@@ -1,7 +1,7 @@
 const PREFIX = 'route-scout-';
-const VERSION = PREFIX + 'shell-a9116f21f109396e';
+const VERSION = PREFIX + 'shell-b3c639b27f19be4a';
 const shell = [
-  './', './index.html', './styles.css', './app.mjs', './route.mjs', './gps.mjs', './map.mjs',
+  './', './index.html', './styles.css', './app.mjs', './route.mjs', './gps.mjs', './map.mjs', './mailboxes.mjs',
   './demo.mjs', './demo-map.png', './icon.svg', './icon-192.png', './icon-512.png', './manifest.webmanifest',
 ];
 const scoped = file => new URL(file, self.registration.scope).href;

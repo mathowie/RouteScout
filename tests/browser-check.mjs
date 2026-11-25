@@ -81,10 +81,15 @@ try {
     await tab(page, 'Settings').click();
     await page.getByRole('button', { name: 'Try demo', exact: true }).click();
     await page.getByRole('button', { name: 'Next step', exact: true }).click();
-    await page.getByRole('button', { name: 'Service done · Next', exact: true }).click();
+    await page.getByRole('button', { name: 'Mailbox done · Next mailbox', exact: true }).click();
+    await sameText(page, '#mailbox-position', 'Mailbox 2 of 2');
     await tab(page, 'Settings').click();
     await page.getByRole('button', { name: 'Open saved route', exact: true }).click();
     await sameText(page, '#turn-title', 'Birch Road');
+    await tab(page, 'Settings').click();
+    await page.getByRole('button', { name: 'Try demo', exact: true }).click();
+    await sameText(page, '#mailbox-position', 'Mailbox 2 of 2');
+    await sameText(page, '#mailbox-sequence', 'Sequence 462–473');
     console.log('Switching to the demo preserves private progress');
   } else {
     await tab(page, 'Settings').click();

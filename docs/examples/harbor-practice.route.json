@@ -40,14 +40,25 @@
       "action": "left",
       "title": "Pine Court mailboxes",
       "source": "Turn left into Pine Court. Service the 12 centralized boxes at the mailbox stop. Continue for 0.05 miles to the exit.",
-      "details": ["One delivery stop with 12 centralized boxes."],
+      "details": [
+        "One delivery stop with 12 centralized boxes."
+      ],
       "miles": 0.05,
       "stops": 1,
       "regular": 0,
       "centralized": 12,
       "service": true,
       "manual": true,
-      "waypoint": null
+      "waypoint": null,
+      "mailboxes": [
+        {
+          "label": "Pine Court cluster",
+          "sequence": {
+            "start": 450,
+            "end": 461
+          }
+        }
+      ]
     },
     {
       "id": 4,

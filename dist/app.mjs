@@ -1,4 +1,5 @@
-import { parseRoute, routeTotals, serviceRequired, moveCursor, findSteps, formatMiles, MAX_ROUTE_BYTES } from './route.mjs';
+import { parseRoute, routeTotals, serviceRequired, findSteps, formatMiles, MAX_ROUTE_BYTES } from './route.mjs';
+import { normalizePosition, moveGuidance, mailboxLabel, sequenceLabel, mailboxReminder } from './mailboxes.mjs';
 import { normalizeFix, usableFix, assistEligible, newAssist, updateAssist, formatDistance, freshFix } from './gps.mjs';
 import { demoRoute } from './demo.mjs';
 import { createRouteMap, distanceFromStep } from './map.mjs';
@@ -18,7 +19,7 @@ const speech = window.speechSynthesis;
 const hasVoice = Boolean(speech && window.SpeechSynthesisUtterance);
 const hasWake = Boolean(navigator.wakeLock?.request);
 const localMode = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-let demo, route, index = 0, view = 'guide';
+let demo, route, index = 0, mailboxIndex = 0, view = 'guide';
 let assist = newAssist();
 let stopsOnly = false, toastTimeout, confirmAction, importVersion = 0;
 let tracking = false, watch = null, gpsRun = 0, fix = null, gpsError = '', wake = null, wakePending = false;
@@ -106,17 +107,17 @@ function storedToken() {
   } catch { return null; }
 }
 
-function restoreIndex() {
+function restoreProgress() {
   const key = progressKey();
   const saved = key ? getJSON(key) : null;
-  return saved?.routeId === route.id && saved.effective === route.effective && Number.isInteger(saved.index)
-    ? Math.min(route.steps.length, Math.max(0, saved.index)) : 0;
+  return saved?.routeId === route.id && saved.effective === route.effective
+    ? normalizePosition(route, saved) : { index: 0, mailboxIndex: 0 };
 }
 
 function saveProgress() {
   const key = progressKey();
   if (key && (demoActive() || routeToken === storedToken())) {
-    if (!storageSet(key, { routeId: route.id, effective: route.effective, index })) {
+    if (!storageSet(key, { routeId: route.id, effective: route.effective, index, mailboxIndex })) {
       toast('This browser couldn’t save your position.');
     }
   }
@@ -142,7 +143,9 @@ function setRoute(next, { persist = false, restore = false, token = null } = {})
   }
   route = next;
   routeToken = token;
-  index = restore ? restoreIndex() : 0;
+  const position = restore ? restoreProgress() : { index: 0, mailboxIndex: 0 };
+  index = position.index;
+  mailboxIndex = position.mailboxIndex;
   assist = newAssist();
   stopsOnly = false;
   $('stops-only').setAttribute('aria-pressed', 'false');
@@ -200,6 +203,13 @@ function renderStep() {
     list.append(...active.details.map(note => make('li', '', note)));
     notes.append(list);
   }
+  const mailbox = active?.mailboxes[mailboxIndex];
+  const mailboxCount = active?.mailboxes.length ?? 0;
+  $('mailbox-guidance').hidden = !mailbox;
+  $('mailbox-position').textContent = mailbox ? `Mailbox ${mailboxIndex + 1} of ${mailboxCount}` : '';
+  $('mailbox-name').textContent = mailbox ? mailboxLabel(mailbox, mailboxIndex) : '';
+  $('mailbox-name').hidden = !mailbox || mailbox.label === `Mailbox ${mailboxIndex + 1}`;
+  $('mailbox-sequence').textContent = mailbox ? sequenceLabel(mailbox) : '';
   const meta = $('turn-meta');
   meta.replaceChildren();
   if (done) {
@@ -215,20 +225,23 @@ function renderStep() {
       meta.append(chip(active.id === 1 ? 'Route start' : 'Drive only'));
     }
   }
-  $('previous').disabled = index === 0;
-  $('next-label').textContent = done ? 'Restart route' : next
-    ? serviceRequired(active) ? 'Service done · Next' : 'Next step'
-    : serviceRequired(active) ? 'Service done · Finish' : 'Finish route';
+  $('previous').disabled = index === 0 && mailboxIndex === 0;
+  const nextMailbox = active?.mailboxes[mailboxIndex + 1];
+  $('next-label').textContent = done ? 'Restart route'
+    : mailbox ? nextMailbox ? 'Mailbox done · Next mailbox' : next ? 'Mailbox done · Next step' : 'Mailbox done · Finish'
+      : next ? serviceRequired(active) ? 'Service done · Next' : 'Next step'
+        : serviceRequired(active) ? 'Service done · Finish' : 'Finish route';
   const upcoming = $('up-next');
   upcoming.hidden = done;
   if (!done) {
     const leading = make('span', 'soft-icon');
-    leading.append(icon(next?.action ?? 'finish'));
+    leading.append(icon(nextMailbox ? 'mail' : next?.action ?? 'finish'));
     const label = make('span', 'up-text');
-    label.append(make('span', 'up-label', next ? `Up next · Step ${next.id}` : 'After this step'),
-      make('strong', '', next ? stepPhrase(next) : 'End of line of travel'));
+    label.append(make('span', 'up-label', nextMailbox ? `Up next · Mailbox ${mailboxIndex + 2} of ${mailboxCount}` : next ? `Up next · Step ${next.id}` : 'After this step'),
+      make('strong', '', nextMailbox ? mailboxLabel(nextMailbox, mailboxIndex + 1) : next ? stepPhrase(next) : 'End of line of travel'));
     upcoming.replaceChildren(leading, label, icon('chevron'));
-    upcoming.setAttribute('aria-label', next ? `Up next: ${stepPhrase(next)}. View route steps` : 'View all route steps');
+    upcoming.setAttribute('aria-label', nextMailbox ? `Next mailbox: ${mailboxLabel(nextMailbox, mailboxIndex + 1)}. View route steps`
+      : next ? `Up next: ${stepPhrase(next)}. View route steps` : 'View all route steps');
   }
   renderGPS();
 }
@@ -286,26 +299,30 @@ function setView(next, syncHash = true) {
 }
 
 function go(event, target) {
-  const moved = moveCursor(route, index, event, target);
-  if (moved === index && event !== 'reset') return;
-  index = moved;
+  const priorIndex = index;
+  const moved = moveGuidance(route, { index, mailboxIndex }, event, target);
+  if (moved.index === index && moved.mailboxIndex === mailboxIndex && event !== 'reset') return;
+  index = moved.index;
+  mailboxIndex = moved.mailboxIndex;
   assist = newAssist();
   saveProgress();
   renderStep();
   if (view === 'steps') renderList();
   speech?.cancel();
-  if (settings.voice && step()) announce();
+  if (settings.voice && step()) announce(index !== priorIndex || event === 'jump' || event === 'reset');
 }
 
-function announce() {
+function announce(includeTurn = true) {
   if (!hasVoice || !step()) return;
   const voices = speech.getVoices().filter(voice => voice.localService);
   const voice = voices.find(voice => /^en-US$/i.test(voice.lang)) ??
     voices.find(voice => /^en(?:-|$)/i.test(voice.lang));
   if (!voice) { toast('There’s no on-device English voice available in this browser.'); return; }
   const s = step();
-  const text = [stepPhrase(s), ...s.details,
-    serviceRequired(s) && s.stops ? `${s.stops} service ${s.stops === 1 ? 'stop' : 'stops'} on this step` : '',
+  const mailbox = s.mailboxes[mailboxIndex];
+  const text = [includeTurn !== false ? stepPhrase(s) : '', ...(includeTurn !== false ? s.details : []),
+    mailbox ? mailboxReminder(mailbox, mailboxIndex, s.mailboxes.length)
+      : serviceRequired(s) && s.stops ? `${s.stops} service ${s.stops === 1 ? 'stop' : 'stops'} on this step` : '',
   ].filter(Boolean).join('. ').replace(/\.\./g, '.')
     .replace(/\bNW\b/g, 'Northwest').replace(/\bNE\b/g, 'Northeast')
     .replace(/\bSW\b/g, 'Southwest').replace(/\bSE\b/g, 'Southeast')

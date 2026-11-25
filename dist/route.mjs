@@ -14,6 +14,29 @@ function quantity(x, limit, label) {
   return x;
 }
 
+function readMailboxes(value, step) {
+  if (value == null) return [];
+  const invalid = () => new Error(`Invalid mailbox or sequence in route step ${step.id}.`);
+  if (!Array.isArray(value) || value.length > 1000) throw invalid();
+  if (!value.length) return [];
+  if (!serviceRequired(step)) throw new Error(`Mailbox entries need a service step (${step.id}).`);
+  if (step.stops > 0 && step.stops !== value.length) {
+    throw new Error(`The mailbox list in step ${step.id} must include all ${step.stops} service stops.`);
+  }
+  return value.map((mailbox, index) => {
+    if (!isRecord(mailbox)) throw invalid();
+    const label = 'label' in mailbox ? word(mailbox.label, 140, 'mailbox label') : `Mailbox ${index + 1}`;
+    let sequence = null;
+    if (mailbox.sequence != null) {
+      const range = mailbox.sequence;
+      if (!isRecord(range) || !Number.isInteger(range.start) || !Number.isInteger(range.end) ||
+          !numberIn(range.start, 1, 999999) || !numberIn(range.end, range.start, 999999)) throw invalid();
+      sequence = { start: range.start, end: range.end };
+    }
+    return { label, sequence };
+  });
+}
+
 export function isPoint(x) {
   return Array.isArray(x) && x.length === 2 && numberIn(x[0], -85, 85) && numberIn(x[1], -180, 180);
 }
@@ -55,7 +78,7 @@ export function parseRoute(input) {
         (step.details != null && (!Array.isArray(step.details) || step.details.length > 16))) {
       throw new Error(`Invalid or out-of-order route step ${i + 1}.`);
     }
-    return {
+    const normalized = {
       id: step.id,
       action: step.action,
       title: word(step.title, 140, 'step title'),
@@ -69,6 +92,7 @@ export function parseRoute(input) {
       manual: step.manual === true,
       waypoint: step.waypoint?.slice() ?? null,
     };
+    return { ...normalized, mailboxes: readMailboxes(step.mailboxes, normalized) };
   });
   if (doc.miles != null && !numberIn(doc.miles, 0, 5000)) throw new Error('Invalid route mileage.');
   return {
